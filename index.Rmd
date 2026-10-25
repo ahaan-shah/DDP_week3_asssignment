@@ -1,0 +1,53 @@
+---
+title: "Cars in 3D"
+author: "Ahaan Shah"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  revealjs::revealjs_presentation:
+    theme: sky
+    transition: fade
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(plotly)
+```
+
+## The question
+
+Do heavier, more powerful cars use more fuel?
+
+- Data: `mtcars` (32 car models, built into R)
+- Tool: Plotly (drag to rotate, scroll to zoom, hover for car names)
+- Created on `r format(Sys.Date(), '%B %d, %Y')`
+
+<style>
+.reveal .controls{color:#e8590c!important;font-size:24px!important}
+.reveal .controls .controls-arrow{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+</style>
+
+## Interactive 3D plot
+
+```{r plot1}
+mtcars$cyl_f <- factor(mtcars$cyl, labels = c("4 cyl", "6 cyl", "8 cyl"))
+mtcars$car <- rownames(mtcars)
+
+plot_ly(mtcars, x = ~wt, y = ~hp, z = ~mpg, color = ~cyl_f,
+        colors = c("#2b8a3e", "#f59f00", "#e03131"),
+        type = "scatter3d", mode = "markers",
+        marker = list(size = 6, opacity = 0.9),
+        text = ~car, hoverinfo = "text+x+y+z") %>%
+  layout(scene = list(
+           xaxis = list(title = "Weight (1000 lbs)"),
+           yaxis = list(title = "Horsepower"),
+           zaxis = list(title = "Miles per gallon")),
+         legend = list(title = list(text = "Cylinders")))
+```
+
+## Takeaway
+
+- Heavier cars get fewer miles per gallon
+- More horsepower also means fewer miles per gallon
+- 8-cylinder cars sit in the heavy, powerful, thirsty corner
